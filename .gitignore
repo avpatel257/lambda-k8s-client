@@ -1,0 +1,41 @@
+# Files to exclude from versioning
+
+# Subversion
+.svn/
+
+# Maven
+target/
+pom.xml.releaseBackup
+release.properties
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+.cache
+
+# IntelliJ
+*.iml
+.idea/
+
+# Generated
+/buildanddeploy
+bin/
+.worksheet/
+
+# OS X
+.DS_Store
+
+# jenv
+.java-version
+
+# log directory
+
+# ensime
+.ensime
+.ensime_cache/
+
+# Not sure what causes this, but until it's debugged, avoiding checking it in
+log.dir_IS_UNDEFINED
+
