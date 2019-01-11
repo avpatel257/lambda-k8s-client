@@ -39,3 +39,5 @@ bin/
 # Not sure what causes this, but until it's debugged, avoiding checking it in
 log.dir_IS_UNDEFINED
 
+.serverless
+
