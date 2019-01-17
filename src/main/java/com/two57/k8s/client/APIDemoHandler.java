@@ -100,7 +100,7 @@ public class APIDemoHandler implements RequestStreamHandler {
                 fullFillmentText = "There are two healthy instances of user service running in your dev environment.";
             case "DeployApp":
                 System.out.println("== Action: DeployApp ===");
-                version = Integer.parseInt((String) req.getQueryResult().getParameters().get("app_version"));
+                version = (int)Double.parseDouble((String) req.getQueryResult().getParameters().get("app_version"));
                 serviceName = (String) req.getQueryResult().getParameters().get("app_name");
                 status = K8SUtils.deployService(String.format("%s-service", serviceName), String.valueOf(version));
                 if (status.equalsIgnoreCase("success")) {
