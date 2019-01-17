@@ -17,6 +17,8 @@ public class K8SUtils {
     final static String VERSION_TAG = "version";
     final static String SERVICE_TAG = "service";
 
+    final static String namespace = "dev";
+
     public static final KubernetesClient getConfigClient() {
 
         if (API_TOKEN == null || API_URL == null) {
@@ -74,7 +76,7 @@ public class K8SUtils {
         return Boolean.TRUE;
     }
 
-    public static String deployService(final String serviceName, final String version, final String namespace) {
+    public static String deployService(final String serviceName, final String version) {
         getConfigClient().rootPaths().getPaths().forEach(System.out::println);
         final String imageName = String.format("avpatel257/two57-%s:%s.0.0", serviceName, version);
 
@@ -95,7 +97,7 @@ public class K8SUtils {
                 .withNewMetadata().withName("user-service-rc").addToLabels(rcLabels).endMetadata()
                 .withNewSpec().withReplicas(2)
                 .withNewTemplate()
-                .withNewMetadata().addToLabels("app", "user-service").addToLabels(VERSION_TAG, version).endMetadata()
+                .withNewMetadata().addToLabels("app", "user-service-app").addToLabels(VERSION_TAG, version).endMetadata()
                 .withNewSpec()
                 .addNewContainer().withName("user-service").withImage(imageName)
                 .addNewPort().withContainerPort(8080).endPort()
@@ -106,6 +108,17 @@ public class K8SUtils {
 
         getConfigClient().replicationControllers().inNamespace(namespace).createOrReplace(rc);
         //getConfigClient().replicationControllers().inNamespace(namespace).delete(rc);
+
         return "success";
+    }
+
+    /**
+     * This method will always deploy version 1 of the service for now
+     * @param serviceName
+     * @return
+     */
+
+    public static String rollbackService(final String serviceName) {
+        return deployService(serviceName, "1");
     }
 }

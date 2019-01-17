@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: user-service-app
+  namespace: dev
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: user-service-app
+        version: "2"
+        service: user-service
+    spec:
+      containers:
+      - image: avpatel257/two57-user-service:2.0.0
+        name: user-service-app
+        ports:
+        - name: http
+          containerPort: 8080
+      imagePullSecrets:
+      - name: regcred
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1

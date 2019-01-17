@@ -21,6 +21,9 @@ public class K8SHandler implements RequestHandler<Map<String, Object>, ApiGatewa
     }
 
     public static void main(String[] args) throws Exception {
-        K8SUtils.deployService("user-service", "2", "dev");
+        //K8SUtils.deployService("user-service", "2");
+        //K8SUtils.deployService("user-service", "2");
+        K8SUtils.rollbackService("user-service");
+        //K8SUtils.test();
     }
 }
