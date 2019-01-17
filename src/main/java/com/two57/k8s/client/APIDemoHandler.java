@@ -5,6 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2.model.GoogleCloudDialogflowV2WebhookResponse;
+import com.two57.k8s.client.utils.K8SUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -34,25 +35,24 @@ public class APIDemoHandler implements RequestStreamHandler {
 
             if (event.get("body") != null) {
                 System.out.println("== Request Body======================");
-                System.out.println((String)event.get("body"));
+                System.out.println((String) event.get("body"));
                 System.out.println("== Converting to DialogFlow Webhook Request ======================");
 
                 JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
-                GoogleCloudDialogflowV2WebhookRequest dialogflowV2WebhookRequest = jacksonFactory.createJsonParser((String)event.get("body"))
+                GoogleCloudDialogflowV2WebhookRequest dialogflowV2WebhookRequest = jacksonFactory.createJsonParser((String) event.get("body"))
                         .parse(GoogleCloudDialogflowV2WebhookRequest.class);
 
                 System.out.println("== User is Requesting ======================");
-                System.out.println(dialogflowV2WebhookRequest.getQueryResult().getQueryText() );
+                System.out.println(dialogflowV2WebhookRequest.getQueryResult().getQueryText());
                 System.out.println("======================");
-
 
 
                 GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse();
                 String fullfillmentText = null;
 
-                if(dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("en"))
-                   fullfillmentText = processEnRequest();
-                else if(dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("hi"))
+                if (dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("en"))
+                    fullfillmentText = processEnRequest(dialogflowV2WebhookRequest);
+                else if (dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("hi"))
                     fullfillmentText = processHiRequest();
 
 
@@ -60,7 +60,6 @@ public class APIDemoHandler implements RequestStreamHandler {
 
                 responseText = jacksonFactory.toPrettyString(response);
             }
-
 
 
             JSONObject responseBody = new JSONObject();
@@ -77,7 +76,7 @@ public class APIDemoHandler implements RequestStreamHandler {
         } catch (ParseException pex) {
             responseJson.put("statusCode", 400);
             responseJson.put("exception", pex);
-        }catch (Exception e){
+        } catch (Exception e) {
             responseJson.put("statusCode", 400);
             responseJson.put("exception", e);
         }
@@ -88,24 +87,41 @@ public class APIDemoHandler implements RequestStreamHandler {
     }
 
 
-    public String processEnRequest(){
-        List<String> namespaces = getNamespaces();
+    public String processEnRequest(final GoogleCloudDialogflowV2WebhookRequest req) {
+        String fullFillmentText = "There was an error performing requested operation. Please try again";
+        int version;
+        String serviceName;
+        String status;
+        switch (req.getQueryResult().getIntent().getDisplayName()) {
+            case "EnvironmentHealth":
+                return "There are two healthy instances of user service running in your dev environment.";
+            case "DeployApp":
+                version = Integer.parseInt((String) req.getQueryResult().getParameters().get("app_version"));
+                serviceName = (String) req.getQueryResult().getParameters().get("app_name");
+                status = K8SUtils.deployService(String.format("%s-service", serviceName), String.valueOf(version));
+                if (status.equalsIgnoreCase("success")) {
+                    fullFillmentText = String.format("Done! Version %s of %s service is deployed successfully to dev environment", version, serviceName);
+                } else {
+                    fullFillmentText = "There was an error performing service deployment. Please try again";
+                }
+            case "RollbackApp":
+                serviceName = (String) req.getQueryResult().getParameters().get("app_name");
+                status = K8SUtils.rollbackService(String.format("%s-service", serviceName));
+                if (status.equalsIgnoreCase("success")) {
+                    fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
+                } else {
+                    fullFillmentText = "There was an error performing rollback. Please try again";
+                }
+            default:
+                break;
+        }
+        System.out.println("FullFullment Text : " + fullFillmentText);
 
-        System.out.println("Name Spaces from eks : " + namespaces.toString());
-
-        String fullFillmentText = "You have folling namespaces in your environment ";
-
-        String s = namespaces.stream().map(Object::toString).collect(Collectors.joining(","));
-
-        fullFillmentText = fullFillmentText + s;
-
-        System.out.println("FullFullment Text : " + fullFillmentText) ;
-
-        return  fullFillmentText;
+        return fullFillmentText;
     }
 
 
-    public String processHiRequest(){
+    public String processHiRequest() {
         List<String> namespaces = getNamespaces();
 
         System.out.println("Name Spaces from eks : " + namespaces.toString());
@@ -116,8 +132,8 @@ public class APIDemoHandler implements RequestStreamHandler {
 
         fullFillmentText = fullFillmentText + s;
 
-        System.out.println("FullFullment Text : " + fullFillmentText) ;
+        System.out.println("FullFullment Text : " + fullFillmentText);
 
-        return  fullFillmentText;
+        return fullFillmentText;
     }
 }

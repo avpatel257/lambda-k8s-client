@@ -1,145 +1,56 @@
 {
-
-
   "responseId": "0c353001-3a42-479f-8854-5c7a1e2b7393",
-
-
   "queryResult": {
-
-
     "queryText": "deploy user service with version 2",
-
-
     "parameters": {
-
-
       "app_name": "user",
-
-
       "app_version": 2.0
-
-
     },
-
-
     "allRequiredParamsPresent": true,
-
-
     "fulfillmentText": "Done! Rollback Successful. user service is running with version 2.",
-
-
-    "fulfillmentMessages": [{
-
-
-      "text": {
-
-
-        "text": ["Done! Rollback Successful. user service is running with version 2."]
-
-
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "Done! Rollback Successful. user service is running with version 2."
+          ]
+        }
       }
-
-
-    }],
-
-
-    "outputContexts": [{
-
-
-      "name": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30/contexts/rollback_context",
-
-
-      "lifespanCount": 5,
-
-
-      "parameters": {
-
-
-        "app_name": "user",
-
-
-        "app_version": 2.0,
-
-
-        "app_name.original": "user",
-
-
-        "app_version.original": "2"
-
-
+    ],
+    "outputContexts": [
+      {
+        "name": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30/contexts/rollback_context",
+        "lifespanCount": 5,
+        "parameters": {
+          "app_name": "user",
+          "app_version": 2.0,
+          "app_name.original": "user",
+          "app_version.original": "2"
+        }
+      },
+      {
+        "name": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30/contexts/env_context",
+        "lifespanCount": 5,
+        "parameters": {
+          "app_name": "user",
+          "app_version": 2.0,
+          "app_name.original": "user",
+          "app_version.original": "2",
+          "env_type.original": "dev",
+          "env_type": "dev"
+        }
       }
-
-
-    }, {
-
-
-      "name": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30/contexts/env_context",
-
-
-      "lifespanCount": 5,
-
-
-      "parameters": {
-
-
-        "app_name": "user",
-
-
-        "app_version": 2.0,
-
-
-        "app_name.original": "user",
-
-
-        "app_version.original": "2",
-
-
-        "env_type.original": "dev",
-
-
-        "env_type": "dev"
-
-
-      }
-
-
-    }],
-
-
+    ],
     "intent": {
-
-
       "name": "projects/demoapp-509dc/agent/intents/ac004a56-9f26-4ef2-81ab-9ed7d660283e",
-
-
       "displayName": "RollbackApp"
-
-
     },
-
-
     "intentDetectionConfidence": 0.44,
-
-
     "languageCode": "en"
-
-
   },
-
-
   "originalDetectIntentRequest": {
-
-
     "payload": {
-
-
     }
-
-
   },
-
-
   "session": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30"
-
-
 }
