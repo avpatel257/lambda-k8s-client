@@ -1,0 +1,28 @@
+{
+  "responseId": "cabdb08c-bc89-49e6-838a-e7c283d1221d",
+  "queryResult": {
+    "queryText": "get me opening price of Apple for yesterday",
+    "action": "input.getStockPrice",
+    "parameters": {
+      "company_name": "Apple",
+      "price_type": "opening",
+      "date": "2019-01-02T12:00:00-05:00"
+    },
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [{
+      "text": {
+        "text": [""]
+      }
+    }],
+    "intent": {
+      "name": "projects/demoapp-509dc/agent/intents/10cca46d-a5a9-4436-b46f-ea534f405765",
+      "displayName": "GetStockPrice"
+    },
+    "intentDetectionConfidence": 1.0,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "payload": {}
+  },
+  "session": "projects/demoapp-509dc/agent/sessions/9cd1aca1-a4d5-1dd2-1223-d8c93fe391c9"
+}

@@ -11,6 +11,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -95,34 +96,52 @@ public class APIDemoHandler implements RequestStreamHandler {
         int version;
         String serviceName;
         String status;
-        switch (req.getQueryResult().getIntent().getDisplayName()) {
-            case "EnvironmentHealth":
-                fullFillmentText = "There are two healthy instances of user service running in your dev environment.";
-            case "DeployApp":
-                System.out.println("== Action: DeployApp ===");
-                version = (int)Double.parseDouble((String) req.getQueryResult().getParameters().get("app_version"));
-                serviceName = (String) req.getQueryResult().getParameters().get("app_name");
-                status = K8SUtils.deployService(String.format("%s-service", serviceName), String.valueOf(version));
-                if (status.equalsIgnoreCase("success")) {
-                    fullFillmentText = String.format("Done! Version %s of %s service is deployed successfully to dev environment", version, serviceName);
-                } else {
-                    fullFillmentText = "There was an error performing service deployment. Please try again";
-                }
-            case "RollbackApp":
-                System.out.println("== Action: DeployApp ===");
-                serviceName = (String) req.getQueryResult().getParameters().get("app_name");
-                status = K8SUtils.rollbackService(String.format("%s-service", serviceName));
-                if (status.equalsIgnoreCase("success")) {
-                    fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
-                } else {
-                    fullFillmentText = "There was an error performing rollback. Please try again";
-                }
-            default:
-                System.out.println("== Action: Unknown ===");
-                break;
-        }
-        System.out.println("FullFullment Text : " + fullFillmentText);
 
+        try {
+
+            switch (req.getQueryResult().getIntent().getDisplayName()) {
+                case "EnvironmentHealth":
+                    fullFillmentText = "There are two healthy instances of user service running in your dev environment.";
+                case "DeployApp":
+                    System.out.println("== Action: DeployApp ===");
+
+                    System.out.println(req.getQueryResult().getParameters().get("app_version"));
+                    System.out.println(req.getQueryResult().getParameters().get("app_name"));
+
+                    version = ((BigDecimal) req.getQueryResult().getParameters().get("app_version")).intValue();
+                    serviceName = (String) req.getQueryResult().getParameters().get("app_name");
+
+
+                    status = K8SUtils.deployService(String.format("%s-service", serviceName), String.valueOf(version));
+                    if (status.equalsIgnoreCase("success")) {
+                        fullFillmentText = String.format("Done! Version %s of %s service is deployed successfully to dev environment", version, serviceName);
+                    } else if (status.contains("already deployed")){
+                        fullFillmentText = status;
+                    } else {
+                        fullFillmentText = "There was an error performing service deployment. Please try again";
+                    }
+                    break;
+                case "RollbackApp":
+                    System.out.println("== Action: DeployApp ===");
+                    System.out.println(req.getQueryResult().getParameters().get("app_version"));
+                    System.out.println(req.getQueryResult().getParameters().get("app_name"));
+                    serviceName = (String) req.getQueryResult().getParameters().get("app_name");
+                    status = K8SUtils.rollbackService(String.format("%s-service", serviceName));
+                    if (status.equalsIgnoreCase("success")) {
+                        fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
+                    } else {
+                        fullFillmentText = "There was an error performing rollback. Please try again";
+                    }
+                    break;
+                default:
+                    System.out.println("== Action: Unknown ===");
+                    break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        System.out.println("FullFullment Text : " + fullFillmentText);
         return fullFillmentText;
     }
 

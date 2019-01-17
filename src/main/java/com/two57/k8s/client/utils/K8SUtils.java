@@ -77,7 +77,6 @@ public class K8SUtils {
     }
 
     public static String deployService(final String serviceName, final String version) {
-        getConfigClient().rootPaths().getPaths().forEach(System.out::println);
         final String imageName = String.format("avpatel257/two57-%s:%s.0.0", serviceName, version);
 
         final Map<String, String> rcLabels = Stream.of(new String[][]{

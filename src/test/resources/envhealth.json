@@ -1,0 +1,35 @@
+{
+  "responseId": "6b0c1598-1a40-4d19-9b0f-d8e60dd548dd",
+  "queryResult": {
+    "queryText": "health of dev environment?",
+    "parameters": {
+      "env_type": "dev"
+    },
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "Your dev environment health is looking good, There are 2 healthy instances of user service are running with version 1.",
+    "fulfillmentMessages": [{
+      "text": {
+        "text": ["Your dev environment health is looking good, There are 2 healthy instances of user service are running with version 1."]
+      }
+    }],
+    "outputContexts": [{
+      "name": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30/contexts/env_context",
+      "lifespanCount": 5,
+      "parameters": {
+        "env_type.original": "dev",
+        "env_type": "dev"
+      }
+    }],
+    "intent": {
+      "name": "projects/demoapp-509dc/agent/intents/509c5082-ce23-4532-9256-f914354d6951",
+      "displayName": "EnvironmentHealth"
+    },
+    "intentDetectionConfidence": 1.0,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "payload": {
+    }
+  },
+  "session": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30"
+}
