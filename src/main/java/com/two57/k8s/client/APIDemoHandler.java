@@ -36,7 +36,6 @@ public class APIDemoHandler implements RequestStreamHandler {
             if (event.get("body") != null) {
                 System.out.println("== Request Body======================");
                 System.out.println((String) event.get("body"));
-                System.out.println("== Converting to DialogFlow Webhook Request ======================");
 
                 JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
                 GoogleCloudDialogflowV2WebhookRequest dialogflowV2WebhookRequest = jacksonFactory.createJsonParser((String) event.get("body"))
@@ -50,10 +49,12 @@ public class APIDemoHandler implements RequestStreamHandler {
                 GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse();
                 String fullfillmentText = null;
 
-                if (dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("en"))
+                if (dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("en")) {
+                    System.out.println("== Request for EN ======================");
                     fullfillmentText = processEnRequest(dialogflowV2WebhookRequest);
-                else if (dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("hi"))
+                } else if (dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("hi")) {
                     fullfillmentText = processHiRequest();
+                }
 
 
                 response.setFulfillmentText(fullfillmentText);
@@ -88,14 +89,17 @@ public class APIDemoHandler implements RequestStreamHandler {
 
 
     public String processEnRequest(final GoogleCloudDialogflowV2WebhookRequest req) {
+        System.out.println("== In process Request now: " + req.getQueryResult().getIntent().getDisplayName() + " ===");
+
         String fullFillmentText = "There was an error performing requested operation. Please try again";
         int version;
         String serviceName;
         String status;
         switch (req.getQueryResult().getIntent().getDisplayName()) {
             case "EnvironmentHealth":
-                return "There are two healthy instances of user service running in your dev environment.";
+                fullFillmentText = "There are two healthy instances of user service running in your dev environment.";
             case "DeployApp":
+                System.out.println("== Action: DeployApp ===");
                 version = Integer.parseInt((String) req.getQueryResult().getParameters().get("app_version"));
                 serviceName = (String) req.getQueryResult().getParameters().get("app_name");
                 status = K8SUtils.deployService(String.format("%s-service", serviceName), String.valueOf(version));
@@ -105,6 +109,7 @@ public class APIDemoHandler implements RequestStreamHandler {
                     fullFillmentText = "There was an error performing service deployment. Please try again";
                 }
             case "RollbackApp":
+                System.out.println("== Action: DeployApp ===");
                 serviceName = (String) req.getQueryResult().getParameters().get("app_name");
                 status = K8SUtils.rollbackService(String.format("%s-service", serviceName));
                 if (status.equalsIgnoreCase("success")) {
@@ -113,6 +118,7 @@ public class APIDemoHandler implements RequestStreamHandler {
                     fullFillmentText = "There was an error performing rollback. Please try again";
                 }
             default:
+                System.out.println("== Action: Unknown ===");
                 break;
         }
         System.out.println("FullFullment Text : " + fullFillmentText);
