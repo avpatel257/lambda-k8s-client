@@ -1,0 +1,172 @@
+{
+
+
+  "responseId": "7a0718aa-a708-47d4-9c70-0b579808311a",
+
+
+  "queryResult": {
+
+
+    "queryText": "Can you please deploy user service version 2 ?",
+
+
+    "parameters": {
+
+
+      "app_name": "user",
+
+
+      "app_version": 2.0
+
+
+    },
+
+
+    "allRequiredParamsPresent": true,
+
+
+    "fulfillmentText": "Done! Version 2 of user service is deployed successfully to dev environment",
+
+
+    "fulfillmentMessages": [{
+
+
+      "text": {
+
+
+        "text": ["Done! Version 2 of user service is deployed successfully to dev environment"]
+
+
+      }
+
+
+    }],
+
+
+    "outputContexts": [{
+
+
+      "name": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30/contexts/rollback_context",
+
+
+      "lifespanCount": 4,
+
+
+      "parameters": {
+
+
+        "app_name": "user",
+
+
+        "app_version": 2.0,
+
+
+        "app_name.original": "user",
+
+
+        "app_version.original": "2 ?"
+
+
+      }
+
+
+    }, {
+
+
+      "name": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30/contexts/env_context",
+
+
+      "lifespanCount": 5,
+
+
+      "parameters": {
+
+
+        "app_name": "user",
+
+
+        "app_version": 2.0,
+
+
+        "app_name.original": "user",
+
+
+        "app_version.original": "2 ?",
+
+
+        "env_type.original": "dev",
+
+
+        "env_type": "dev"
+
+
+      }
+
+
+    }, {
+
+
+      "name": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30/contexts/deployapp_context",
+
+
+      "lifespanCount": 5,
+
+
+      "parameters": {
+
+
+        "app_name": "user",
+
+
+        "app_version": 2.0,
+
+
+        "app_name.original": "user",
+
+
+        "app_version.original": "2 ?"
+
+
+      }
+
+
+    }],
+
+
+    "intent": {
+
+
+      "name": "projects/demoapp-509dc/agent/intents/a40e9c0e-6678-46ed-ac7f-b614cf00308a",
+
+
+      "displayName": "DeployApp"
+
+
+    },
+
+
+    "intentDetectionConfidence": 1.0,
+
+
+    "languageCode": "en"
+
+
+  },
+
+
+  "originalDetectIntentRequest": {
+
+
+    "payload": {
+
+
+    }
+
+
+  },
+
+
+  "session": "projects/demoapp-509dc/agent/sessions/40897c7b-b8f2-820a-2fa1-c0ba2b9a7e30"
+
+
+}

@@ -17,9 +17,9 @@ Purpose of this project is to work with ChatOps. Google assisntant will be passi
 
 Demo Flow
 
-Q. How is health of my dev environment ? 
-A. Your dev environment health is looking good, There are 2 healthy instances of user service are running with version 1.
-Q. Can you please deploy version 2 ?
-A. Done! Version 2 of User service is deployed successfully to dev environment
-Q. Can you please rollback user service with version 1?
-A. Done! Rollback Successful. User service is running with verison 1. 
+- Q. How is health of my dev environment ? 
+- A. Your dev environment health is looking good, There are 2 healthy instances of user service are running with version 1.
+- Q. Can you please deploy version 2 ?
+- A. Done! Version 2 of User service is deployed successfully to dev environment
+- Q. Can you please rollback user service with version 1?
+- A. Done! Rollback Successful. User service is running with verison 1. 
