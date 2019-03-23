@@ -50,12 +50,8 @@ public class APIDemoHandler implements RequestStreamHandler {
                 GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse();
                 String fullfillmentText = null;
 
-                if (dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("en")) {
-                    System.out.println("== Request for EN ======================");
-                    fullfillmentText = processEnRequest(dialogflowV2WebhookRequest);
-                } else if (dialogflowV2WebhookRequest.getQueryResult().getLanguageCode().contains("hi")) {
-                    fullfillmentText = processHiRequest();
-                }
+
+                fullfillmentText = processEnRequest(dialogflowV2WebhookRequest);
 
 
                 response.setFulfillmentText(fullfillmentText);
@@ -114,11 +110,29 @@ public class APIDemoHandler implements RequestStreamHandler {
 
                     status = K8SUtils.deployService(String.format("%s-service", serviceName), String.valueOf(version));
                     if (status.equalsIgnoreCase("success")) {
-                        fullFillmentText = String.format("Done! Version %s of %s service is deployed successfully to dev environment", version, serviceName);
+                        if (req.getQueryResult().getLanguageCode().contains("en")) {
+                            System.out.println("== Request for EN ======================");
+                            fullFillmentText = String.format("Done! Version %s of %s service is deployed successfully to dev environment", version, serviceName);
+                        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
+                            fullFillmentText = String.format("कामयाबी!! %s सर्विस वर्ज़न  नम्बर %s का डिप्लोयमेंट कामयाब हो गया हे.",  serviceName, version);
+                        }
+
                     } else if (status.contains("already deployed")){
-                        fullFillmentText = status;
+                        if (req.getQueryResult().getLanguageCode().contains("en")) {
+                            System.out.println("== Request for EN ======================");
+                            fullFillmentText = String.format("Sorry! Version %s of %s service is already deployed, please deploy new version", version, serviceName);
+                        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
+                            fullFillmentText = String.format("माफ़ कीजिए  %s सर्विस वर्ज़न  नम्बर %s का डिप्लोयमेंट हो चुका हे. कृपया करके नया वर्ज़न बताए.",  serviceName, version);
+                        }
+
                     } else {
-                        fullFillmentText = "There was an error performing service deployment. Please try again";
+                        if (req.getQueryResult().getLanguageCode().contains("en")) {
+                            System.out.println("== Request for EN ======================");
+                            fullFillmentText = "Sorry! There was an error performing service deployment. Please try again";
+                        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
+                            fullFillmentText = "माफ़ कीजिए, टेक्निकल ख़राबी के कारण डिप्लोयमेंट खतम न हो सका, कृपया करके दुबारा आदेश दीजिए.";
+                        }
+
                     }
                     break;
                 case "RollbackApp":
@@ -128,9 +142,22 @@ public class APIDemoHandler implements RequestStreamHandler {
                     serviceName = (String) req.getQueryResult().getParameters().get("app_name");
                     status = K8SUtils.rollbackService(String.format("%s-service", serviceName));
                     if (status.equalsIgnoreCase("success")) {
-                        fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
+
+                        if (req.getQueryResult().getLanguageCode().contains("en")) {
+                            System.out.println("== Request for EN ======================");
+                            fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
+                        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
+                            fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
+                            fullFillmentText =  String.format("कामयाबी!, %s सर्विस का रोल्बैक कामयाब हो गया हे.", serviceName);
+                        }
                     } else {
                         fullFillmentText = "There was an error performing rollback. Please try again";
+                        if (req.getQueryResult().getLanguageCode().contains("en")) {
+                            System.out.println("== Request for EN ======================");
+                            fullFillmentText = "Sorry! There was an error performing rollback operation. Please try again";
+                        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
+                            fullFillmentText = "माफ़ कीजिए, टेक्निकल ख़राबी के कारण डरोल्बैक खतम न हो सका, कृपया करके दुबारा आदेश दीजिए.";
+                        }
                     }
                     break;
                 default:
@@ -141,12 +168,19 @@ public class APIDemoHandler implements RequestStreamHandler {
             e.printStackTrace();
         }
 
+        if (req.getQueryResult().getLanguageCode().contains("en")) {
+            System.out.println("== Request for EN ======================");
+            fullFillmentText = "There was an error performing requested operation. Please try again";
+        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
+            fullFillmentText = "माफ़ कीजिए, टेक्निकल ख़राबी के कारण आपका आदेश खतम न हो सका, कृपया करके दुबारा आदेश दीजिए.";
+        }
         System.out.println("FullFullment Text : " + fullFillmentText);
+
         return fullFillmentText;
     }
 
 
-    public String processHiRequest() {
+    public String processGetEnvironment() {
         List<String> namespaces = getNamespaces();
 
         System.out.println("Name Spaces from eks : " + namespaces.toString());
