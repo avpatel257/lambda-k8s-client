@@ -80,6 +80,8 @@ public class APIDemoHandler implements RequestStreamHandler {
         }
 
         OutputStreamWriter writer = new OutputStreamWriter(outputStream, "UTF-8");
+        System.out.println("======= Response Dialog Flow =========== \n " + responseJson.toString() + " \n =================== end response ==============");
+
         writer.write(responseJson.toString());
         writer.close();
     }
@@ -88,7 +90,15 @@ public class APIDemoHandler implements RequestStreamHandler {
     public String processEnRequest(final GoogleCloudDialogflowV2WebhookRequest req) {
         System.out.println("== In process Request now: " + req.getQueryResult().getIntent().getDisplayName() + " ===");
 
-        String fullFillmentText = "There was an error performing requested operation. Please try again";
+        String fullFillmentText = "";
+
+        if (req.getQueryResult().getLanguageCode().contains("en")) {
+            System.out.println("== Request for EN ======================");
+            fullFillmentText = "There was an error performing requested operation. Please try again";
+        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
+            fullFillmentText = "माफ़ कीजिए, टेक्निकल ख़राबी के कारण आपका आदेश खतम न हो सका, कृपया करके दुबारा आदेश दीजिए.";
+        }
+
         int version;
         String serviceName;
         String status;
@@ -111,23 +121,23 @@ public class APIDemoHandler implements RequestStreamHandler {
                     status = K8SUtils.deployService(String.format("%s-service", serviceName), String.valueOf(version));
                     if (status.equalsIgnoreCase("success")) {
                         if (req.getQueryResult().getLanguageCode().contains("en")) {
-                            System.out.println("== Request for EN ======================");
+                            System.out.println("== Request for EN Deployment successfull ======================");
                             fullFillmentText = String.format("Done! Version %s of %s service is deployed successfully to dev environment", version, serviceName);
                         } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
-                            fullFillmentText = String.format("कामयाबी!! %s सर्विस वर्ज़न  नम्बर %s का डिप्लोयमेंट कामयाब हो गया हे.",  serviceName, version);
+                            fullFillmentText = String.format(" %s सर्विस वर्ज़न  नम्बर %s का डिप्लोयमेंट सफलतापूर्वक पूर्ण हो गया हे. धन्यवाद!",  serviceName, version);
                         }
 
                     } else if (status.contains("already deployed")){
                         if (req.getQueryResult().getLanguageCode().contains("en")) {
-                            System.out.println("== Request for EN ======================");
+                            System.out.println("== Request for EN : Already deployted ======================");
                             fullFillmentText = String.format("Sorry! Version %s of %s service is already deployed, please deploy new version", version, serviceName);
                         } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
-                            fullFillmentText = String.format("माफ़ कीजिए  %s सर्विस वर्ज़न  नम्बर %s का डिप्लोयमेंट हो चुका हे. कृपया करके नया वर्ज़न बताए.",  serviceName, version);
+                            fullFillmentText = String.format("माफ़ कीजिए, %s सर्विस वर्ज़न नम्बर %s पहले से चल रहा है. कृपया करके नया वर्ज़न बताए.",  serviceName, version);
                         }
 
                     } else {
                         if (req.getQueryResult().getLanguageCode().contains("en")) {
-                            System.out.println("== Request for EN ======================");
+                            System.out.println("== Request for EN  exception dueing deployment ======================");
                             fullFillmentText = "Sorry! There was an error performing service deployment. Please try again";
                         } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
                             fullFillmentText = "माफ़ कीजिए, टेक्निकल ख़राबी के कारण डिप्लोयमेंट खतम न हो सका, कृपया करके दुबारा आदेश दीजिए.";
@@ -140,20 +150,31 @@ public class APIDemoHandler implements RequestStreamHandler {
                     System.out.println(req.getQueryResult().getParameters().get("app_version"));
                     System.out.println(req.getQueryResult().getParameters().get("app_name"));
                     serviceName = (String) req.getQueryResult().getParameters().get("app_name");
-                    status = K8SUtils.rollbackService(String.format("%s-service", serviceName));
+                    version = ((BigDecimal) req.getQueryResult().getParameters().get("app_version")).intValue();
+                    status = K8SUtils.rollbackService(String.format("%s-service", serviceName), String.valueOf(version));
+
+                    System.out.println("Roll back Status : " + status);
+
                     if (status.equalsIgnoreCase("success")) {
 
                         if (req.getQueryResult().getLanguageCode().contains("en")) {
-                            System.out.println("== Request for EN ======================");
-                            fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
+                            System.out.println("== Request for EN roll back successfull ======================");
+                            fullFillmentText = String.format("Done! %s service is rolledback successfully with version %s. Thank you.", serviceName,version);
                         } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
-                            fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
-                            fullFillmentText =  String.format("कामयाबी!, %s सर्विस का रोल्बैक कामयाब हो गया हे.", serviceName);
+                            fullFillmentText =  String.format("%s सर्विस का रोल्बैक, वर्ज़न %s पर सफलतापूर्वक पूर्ण हो गया हे. धन्यवाद!", serviceName);
                         }
+                    } else if (status.contains("already deployed")){
+                        if (req.getQueryResult().getLanguageCode().contains("en")) {
+                            System.out.println("== Request for EN : Already deployted ======================");
+                            fullFillmentText = String.format("Sorry! Version %s of %s service is already deployed, please deploy new version", version, serviceName);
+                        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
+                            fullFillmentText = String.format("माफ़ कीजिए, %s सर्विस वर्ज़न नम्बर %s पहले से चल रहा है. कृपया करके नया वर्ज़न बताए.",  serviceName, version);
+                        }
+
                     } else {
                         fullFillmentText = "There was an error performing rollback. Please try again";
                         if (req.getQueryResult().getLanguageCode().contains("en")) {
-                            System.out.println("== Request for EN ======================");
+                            System.out.println("== Request for EN error performing roll back ======================");
                             fullFillmentText = "Sorry! There was an error performing rollback operation. Please try again";
                         } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
                             fullFillmentText = "माफ़ कीजिए, टेक्निकल ख़राबी के कारण डरोल्बैक खतम न हो सका, कृपया करके दुबारा आदेश दीजिए.";
@@ -162,18 +183,13 @@ public class APIDemoHandler implements RequestStreamHandler {
                     break;
                 default:
                     System.out.println("== Action: Unknown ===");
+
                     break;
             }
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        if (req.getQueryResult().getLanguageCode().contains("en")) {
-            System.out.println("== Request for EN ======================");
-            fullFillmentText = "There was an error performing requested operation. Please try again";
-        } else if (req.getQueryResult().getLanguageCode().contains("hi")) {
-            fullFillmentText = "माफ़ कीजिए, टेक्निकल ख़राबी के कारण आपका आदेश खतम न हो सका, कृपया करके दुबारा आदेश दीजिए.";
-        }
         System.out.println("FullFullment Text : " + fullFillmentText);
 
         return fullFillmentText;

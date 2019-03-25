@@ -78,7 +78,7 @@ public class EksTest {
                   System.out.println(req.getQueryResult().getParameters().get("app_version"));
                   System.out.println(req.getQueryResult().getParameters().get("app_name"));
                   serviceName = (String) req.getQueryResult().getParameters().get("app_name");
-                  status = K8SUtils.rollbackService(String.format("%s-service", serviceName));
+                  status = K8SUtils.rollbackService(String.format("%s-service", serviceName), "1");
                   if (status.equalsIgnoreCase("success")) {
                      fullFillmentText = String.format("Done! %s service is rolledback successfully", serviceName);
                   } else {

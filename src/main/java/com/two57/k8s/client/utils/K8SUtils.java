@@ -6,6 +6,7 @@ import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -117,7 +118,7 @@ public class K8SUtils {
      * @return
      */
 
-    public static String rollbackService(final String serviceName) {
-        return deployService(serviceName, "1");
+    public static String rollbackService(final String serviceName, final String version ) {
+        return deployService(serviceName, version);
     }
 }
