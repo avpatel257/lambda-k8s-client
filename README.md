@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/avpatel257/lambda-k8s-client.svg?branch=master)](https://travis-ci.org/avpatel257/lambda-k8s-client)
 
 
-###EKS client wrapper
+### EKS client wrapper
 
 This uses `https://github.com/fabric8io/kubernetes-client` as java client.
 
